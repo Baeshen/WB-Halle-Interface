@@ -3,8 +3,7 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * Created in HalleInterface : PACKAGE_NAME
- * on 20.12.2020 : 13:41 .
+ * Interface to Module Analyse.
  */
 public class InteractionInterface {
     private static final String DB_URL = "jdbc:mariadb://goethe.se.uni-hannover.de:3306/VirtuHoS_3";   // URL von Databank
@@ -19,6 +18,11 @@ public class InteractionInterface {
         this.connection = DriverManager.getConnection(DB_URL, USER, PASS);
     }
 
+    /**
+     * Returns all the data for all users.
+     * @return A list with all user data.
+     * @throws SQLException
+     */
     public List<AnalysedData> getAnalysedData() throws SQLException {
         PreparedStatement statement = this.connection.prepareStatement("SELECT idFrom, idTo, duration, flow FROM ANALYSE_interaction");
         ArrayList<AnalysedData> result = new ArrayList<>();
@@ -38,7 +42,12 @@ public class InteractionInterface {
         return result;
     }
 
-
+    /**
+     * Returns the data for one user.
+     * @param userId ID of the user which data is wanted.
+     * @return Returns interaction data for one user.
+     * @throws SQLException
+     */
     public List<AnalysedData> getAnalysedData(String userId) throws SQLException {
         PreparedStatement statement = this.connection.prepareStatement("SELECT idFrom, idTo, duration, flow FROM ANALYSE_interaction WHERE idFrom = ? OR idTo = ?");
         ArrayList<AnalysedData> result = new ArrayList<>();
@@ -59,5 +68,29 @@ public class InteractionInterface {
         resultSet.close();
         statement.close();
         return result;
+    }
+
+    /**
+     * Returns the date for a selection of users.
+     * @param userIds UserIDs the data should be returned for
+     * @return A list with the data between the selected users.
+     * @throws SQLException
+     */
+    public List<AnalysedData> getAnalysedData(List<String> userIds) throws SQLException {
+        ArrayList<AnalysedData> result = new ArrayList<>(getAnalysedData());
+        // Remove all entries with users not in userIds
+        result.removeIf(entry -> !(userIds.contains(entry.getFrom()) && userIds.contains(entry.getTo())));
+
+        return result;
+    }
+
+    /**
+     * Returns the date for a selection of users.
+     * @param userIds UserIDs the data should be returned for
+     * @return A list with the data between the selected users.
+     * @throws SQLException
+     */
+    public List<AnalysedData> getAnalysedData(String... userIds) throws SQLException {
+        return getAnalysedData(Arrays.asList(userIds));
     }
 }

@@ -15,7 +15,7 @@ public class Main {
             }
 
             System.out.println("With User Select");
-            for (AnalysedData data : interactionInterface.getAnalysedData("4")) {
+            for (AnalysedData data : interactionInterface.getAnalysedData("1", "2", "3", "4", "5")) {
                 printData(data);
             }
 
@@ -28,7 +28,7 @@ public class Main {
         System.out.println("From %s to %s with the values: duration: %f, flow: %f ".formatted(
                 data.getFrom(),
                 data.getTo(),
-                data.getInteractionDuration(),
+                data.getInteractionWeight(),
                 data.getFlowDistance()));
     }
 
